@@ -9,17 +9,17 @@
 #include <string.h>
 
 static const char *setting_items[][2] = {
-    {"Date/Time", "Date & Time"},
-    {"LCD Brightness", "LCD Brightness"},
-    {"Bluetooth", "Bluetooth"},
-    {"Region", "Region"},
-    {"Language", "Language"},
+    {"日期/时间", "Date & Time"},
+    {"LCD亮度", "LCD Brightness"},
+    {"蓝牙", "Bluetooth"},
+    {"地区", "Region"},
+    {"语言", "Language"},
     {"GPS", "GPS"},
-    {"Wi-Fi", "WIFI"},
-    {"Key Sound", "Key Sound"},
-    {"Unit", "Unit"},
-    {"Reset", "Reset"},
-    {"Info", "Info"},
+    {"Wi-Fi", "Wi-Fi"},
+    {"按键音", "Key Sound"},
+    {"单位", "Unit"},
+    {"恢复默认", "Reset"},
+    {"系统信息", "Info"},
 };
 
 static char setting_values[16][16] = {
@@ -47,7 +47,6 @@ static void setting_event(lv_event_t *e)
             bsp_display_brightness_set(val);
             break;
         }
-
         case 2:
         case 5:
         case 6:
@@ -60,7 +59,6 @@ static void setting_event(lv_event_t *e)
 
             lv_label_set_text(value_labels[i], setting_values[i]);
             break;
-
         case 4:
             if (ui_get_language() == LANG_ZH) {
                 ui_set_language(LANG_EN);
@@ -72,7 +70,6 @@ static void setting_event(lv_event_t *e)
 
             ui_menu_navigate(UI_MENU_SETTING);
             break;
-
         default:
             break;
     }
@@ -86,28 +83,28 @@ static void back_event(lv_event_t *e)
 
 lv_obj_t* ui_setting_create(void)
 {
-    lv_obj_t *screen = lv_obj_create(NULL);
+    lv_obj_t *screen = ui_create_screen();
+    lv_obj_t *list;
 
-    ui_create_title(screen, ui_lang("Setting", "Settings"));
+    ui_create_title(screen, ui_lang("设置", "Settings"));
     ui_create_back_btn(screen, back_event);
 
-    lv_obj_t *list = lv_obj_create(screen);
-    lv_obj_set_size(list, 440, 650);
-    lv_obj_align(list, LV_ALIGN_BOTTOM_MID, 0, -10);
-    lv_obj_set_flex_flow(list, LV_FLEX_FLOW_COLUMN);
+    list = ui_create_page_list(screen);
 
     for (int i = 0; i < 11; i++) {
-        lv_obj_t *btn = lv_button_create(list);
-        lv_obj_set_size(btn, 440, 60);
+        lv_obj_t *btn = ui_create_list_btn(list);
+        lv_obj_t *label = lv_label_create(btn);
+
         lv_obj_add_event_cb(btn, setting_event, LV_EVENT_CLICKED, (void *)(uintptr_t)i);
 
-        lv_obj_t *label = lv_label_create(btn);
         lv_label_set_text(label, ui_lang(setting_items[i][0], setting_items[i][1]));
-        lv_obj_align(label, LV_ALIGN_LEFT_MID, 20, 0);
+        ui_apply_btn_text_style(label);
+        lv_obj_align(label, LV_ALIGN_LEFT_MID, 0, 0);
 
         value_labels[i] = lv_label_create(btn);
         lv_label_set_text(value_labels[i], setting_values[i]);
-        lv_obj_align(value_labels[i], LV_ALIGN_RIGHT_MID, -20, 0);
+        ui_apply_btn_text_style(value_labels[i]);
+        lv_obj_align(value_labels[i], LV_ALIGN_RIGHT_MID, 0, 0);
     }
 
     return screen;
