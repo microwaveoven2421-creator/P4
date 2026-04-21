@@ -1,11 +1,21 @@
 idf_component_register(
     SRCS
         "main.c"
-        "template_ui.c"
+
+        "UI/ui.c"
+        "UI/ui_manager.c"
+        "ui_common.c"
         "UI/Font/my_Font_32.c"
+
+        "UI/screens/ui_home.c"
+        "UI/screens/ui_setting.c"
+        "UI/screens/ui_fuel.c"
+
     INCLUDE_DIRS
         "."
-        "UI")
+        "UI"
+        "UI/screens"
+)
 
 idf_component_get_property(LVGL_LIB lvgl__lvgl COMPONENT_LIB)
 target_compile_options(

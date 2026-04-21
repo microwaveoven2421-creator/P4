@@ -19,6 +19,7 @@ lv_obj_t* ui_create_back_btn(lv_obj_t *parent, lv_event_cb_t cb)
     lv_obj_t *btn = lv_button_create(parent);
     lv_obj_set_size(btn, 90, 44);
     lv_obj_align(btn, LV_ALIGN_TOP_LEFT, 20, 20);
+
     lv_obj_add_event_cb(btn, cb, LV_EVENT_CLICKED, NULL);
 
     lv_obj_t *label = lv_label_create(btn);

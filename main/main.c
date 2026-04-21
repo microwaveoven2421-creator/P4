@@ -1,9 +1,10 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "lvgl.h"
-#include "template_ui.h"
+// #include "template_ui.h"
 #include "bsp/esp-bsp.h"
 #include "bsp/display.h"
+#include "ui.h"
 
 void app_main(void)
 {
@@ -11,7 +12,7 @@ void app_main(void)
 
     bsp_display_lock(portMAX_DELAY);
 
-    template_ui_init();
+    ui_init();
 
     bsp_display_unlock();
 
