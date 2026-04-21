@@ -71,11 +71,12 @@ lv_obj_t* ui_create_back_btn(lv_obj_t *parent, lv_event_cb_t cb)
     return btn;
 }
 
+// 创建一个带有标题的页面框架，标题居中显示，返回按钮在左上角
 lv_obj_t* ui_create_page_list(lv_obj_t *parent)
 {
     lv_obj_t *list = lv_obj_create(parent);
 
-    lv_obj_set_size(list, 456, 624);
+    lv_obj_set_size(list, 456, 680);
     lv_obj_align(list, LV_ALIGN_BOTTOM_MID, 0, -10);
     lv_obj_set_style_radius(list, 28, 0);
     lv_obj_set_style_bg_color(list, lv_color_hex(0xFBFCFE), 0);
@@ -99,6 +100,7 @@ lv_obj_t* ui_create_page_list(lv_obj_t *parent)
     return list;
 }
 
+// 创建一个列表按钮，宽度占满父容器，适合放在列表中
 lv_obj_t* ui_create_list_btn(lv_obj_t *parent)
 {
     lv_obj_t *btn = lv_button_create(parent);

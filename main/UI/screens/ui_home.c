@@ -17,7 +17,7 @@ static const home_item_t home_items[] = {
     {"2", "压力测量", "Pressure"},
     {"3", "温度测量", "Temp"},
     {"4", "设置", "Settings"},
-    {"5", "标定", "Calib"},
+    {"5", "校准", "Calib"},
     {"6", "...", "..."},
 };
 
@@ -60,12 +60,12 @@ static lv_obj_t* create_btn(lv_obj_t *parent, const home_item_t *item, uint32_t 
 {
     lv_obj_t *cont = lv_obj_create(parent);
     lv_obj_remove_style_all(cont);
-    lv_obj_set_size(cont, 144, 116);
+    lv_obj_set_size(cont, 150, 150);
     lv_obj_set_flex_flow(cont, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(cont, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
     lv_obj_t *btn = lv_button_create(cont);
-    lv_obj_set_size(btn, 128, 66);
+    lv_obj_set_size(btn, 130, 100);
     lv_obj_set_style_radius(btn, 18, 0);
     lv_obj_set_style_bg_color(btn, lv_color_hex(0xFFFFFF), 0);
     lv_obj_set_style_bg_opa(btn, LV_OPA_COVER, 0);
@@ -86,6 +86,7 @@ static lv_obj_t* create_btn(lv_obj_t *parent, const home_item_t *item, uint32_t 
 
     lv_obj_t *cap = lv_label_create(cont);
     lv_label_set_text(cap, ui_lang(item->zh, item->en));
+    lv_obj_set_style_pad_top(cap, 10, 0);// caption与按钮之间的间距
     ui_apply_btn_text_style(cap);
     lv_obj_set_width(cap, 144);
     lv_label_set_long_mode(cap, LV_LABEL_LONG_CLIP);
@@ -99,12 +100,14 @@ static void create_grid(lv_obj_t *parent)
 {
     lv_obj_t *grid = lv_obj_create(parent);
     lv_obj_remove_style_all(grid);
-    lv_obj_set_size(grid, 456, 280);
-    lv_obj_align(grid, LV_ALIGN_BOTTOM_MID, 0, -34);
+    lv_obj_set_size(grid, 480, 360);// 3列2行，每个格子
+    lv_obj_align(grid, LV_ALIGN_BOTTOM_MID, 0, -45);// 调整底部距离，给导航栏留出空间
+    lv_obj_set_style_pad_row(grid, 15, 0);  // 控制上下间距
+    //lv_obj_set_style_pad_column(grid, 8, 0);// 控制左右间距
     lv_obj_set_layout(grid, LV_LAYOUT_GRID);
 
-    static int32_t col[] = {152, 152, 152, LV_GRID_TEMPLATE_LAST};
-    static int32_t row[] = {136, 136, LV_GRID_TEMPLATE_LAST};
+    static int32_t col[] = {160, 160, 160, LV_GRID_TEMPLATE_LAST};
+    static int32_t row[] = {170, 170, LV_GRID_TEMPLATE_LAST};
 
     lv_obj_set_grid_dsc_array(grid, col, row);
 
