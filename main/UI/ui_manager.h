@@ -7,6 +7,7 @@ typedef enum {
     UI_MENU_HOME = 0,
     UI_MENU_SETTING,
     UI_MENU_FUEL,
+    UI_MENU_SYSTEM_INFO,
     UI_MENU_MAX
 } ui_menu_t;
 

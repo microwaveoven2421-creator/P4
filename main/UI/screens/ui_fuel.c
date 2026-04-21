@@ -27,10 +27,9 @@ lv_obj_t* ui_fuel_create(void)
 
     ui_create_title(screen, ui_lang("燃料列表", "Fuel List"));
     ui_create_back_btn(screen, back_event);
-
     list = ui_create_page_list(screen);
 
-    for (int i = 0; i < 9; i++) {
+    for(int i = 0; i < 9; i++) {
         lv_obj_t *btn = ui_create_list_btn(list);
         lv_obj_t *label = lv_label_create(btn);
 

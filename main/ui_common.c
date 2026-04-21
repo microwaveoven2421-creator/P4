@@ -47,6 +47,7 @@ lv_obj_t* ui_create_title(lv_obj_t *parent, const char *text)
 lv_obj_t* ui_create_back_btn(lv_obj_t *parent, lv_event_cb_t cb)
 {
     lv_obj_t *btn = lv_button_create(parent);
+    lv_obj_t *label;
 
     lv_obj_set_size(btn, 112, 44);
     lv_obj_align(btn, LV_ALIGN_TOP_LEFT, 16, 18);
@@ -60,10 +61,9 @@ lv_obj_t* ui_create_back_btn(lv_obj_t *parent, lv_event_cb_t cb)
     lv_obj_set_style_pad_ver(btn, 6, 0);
     lv_obj_set_style_bg_color(btn, lv_color_hex(0xDDE7F2), LV_STATE_PRESSED);
     lv_obj_set_style_border_color(btn, lv_color_hex(0x8DA2B8), LV_STATE_PRESSED);
-
     lv_obj_add_event_cb(btn, cb, LV_EVENT_CLICKED, NULL);
 
-    lv_obj_t *label = lv_label_create(btn);
+    label = lv_label_create(btn);
     lv_label_set_text(label, ui_lang("返回", "Back"));
     ui_style_text(label, lv_color_hex(0x334155));
     lv_obj_center(label);
@@ -71,7 +71,6 @@ lv_obj_t* ui_create_back_btn(lv_obj_t *parent, lv_event_cb_t cb)
     return btn;
 }
 
-// 创建一个带有标题的页面框架，标题居中显示，返回按钮在左上角
 lv_obj_t* ui_create_page_list(lv_obj_t *parent)
 {
     lv_obj_t *list = lv_obj_create(parent);
@@ -100,7 +99,6 @@ lv_obj_t* ui_create_page_list(lv_obj_t *parent)
     return list;
 }
 
-// 创建一个列表按钮，宽度占满父容器，适合放在列表中
 lv_obj_t* ui_create_list_btn(lv_obj_t *parent)
 {
     lv_obj_t *btn = lv_button_create(parent);
