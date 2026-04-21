@@ -1,0 +1,6 @@
+## IDF Component Manager Manifest File
+dependencies:
+  lvgl/lvgl:
+    version: 9.4.*
+    public: true
+  espressif/esp32_p4_function_ev_board: '*'

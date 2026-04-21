@@ -1,0 +1,1 @@
+pyftsubset HarmonyOS_Sans_SC_Medium.ttf --text-file=chars.txt --unicodes="U+0020-007E" --output-file=HarmonyOS_Sans_SC_Medium_Custom.ttf
