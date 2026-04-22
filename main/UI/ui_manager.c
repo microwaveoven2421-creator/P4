@@ -3,6 +3,7 @@
 #include "screens/ui_setting.h"
 #include "screens/ui_fuel.h"
 #include "screens/ui_system_info.h"
+#include "screens/ui_calibration.h"
 
 #include <stdint.h>
 
@@ -14,13 +15,15 @@ static lv_obj_t *current_screen = NULL;
 static lv_obj_t* create_menu(ui_menu_t menu)
 {
     switch(menu) {
-        case UI_MENU_HOME:
+        case UI_MENU_HOME:// 首页
             return ui_home_create();
-        case UI_MENU_SETTING:
+        case UI_MENU_SETTING:// 设置
             return ui_setting_create();
-        case UI_MENU_FUEL:
+        case UI_MENU_FUEL:// 燃油
             return ui_fuel_create();
-        case UI_MENU_SYSTEM_INFO:
+        case UI_MENU_CALIBRATION:// 校准
+            return ui_calibration_create();
+        case UI_MENU_SYSTEM_INFO:// 系统信息
             return ui_system_info_create();
         default:
             return NULL;

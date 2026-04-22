@@ -1,3 +1,14 @@
+/**
+ * @file ui_date_picker.h
+ *
+ * @brief 日期选择器界面
+ *
+ * @author MO
+ * @date 2026-04-21
+ *
+ * @version 1.0
+ *
+**/
 #ifndef UI_DATE_PICKER_H
 #define UI_DATE_PICKER_H
 

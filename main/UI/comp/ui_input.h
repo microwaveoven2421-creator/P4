@@ -1,3 +1,14 @@
+/**
+ * @file ui_input.h
+ *
+ * @brief 输入框界面
+ *
+ * @author MO
+ * @date 2026-04-21
+ *
+ * @version 1.0
+ *
+**/
 #ifndef UI_INPUT_H
 #define UI_INPUT_H
 

@@ -225,9 +225,13 @@ lv_obj_t* ui_setting_create(void)
         lv_obj_align(label, LV_ALIGN_LEFT_MID, 0, 0);
 
         value_labels[i] = lv_label_create(btn);
+        // ===== 防止时间过长遮挡 =====
+        lv_obj_set_width(value_labels[i], 140);
+        lv_label_set_long_mode(value_labels[i], LV_LABEL_LONG_SCROLL_CIRCULAR);
+
         lv_label_set_text(value_labels[i], setting_values[i]);
         ui_apply_btn_text_style(value_labels[i]);
-        lv_obj_align(value_labels[i], LV_ALIGN_RIGHT_MID, 0, 0);
+        lv_obj_align(value_labels[i], LV_ALIGN_RIGHT_MID, 0, 0);// -10,0 是为了防止过长的值遮挡箭头
     }
 
     update_datetime_text();

@@ -20,7 +20,7 @@ static const home_item_t home_items[] = {
     {"2", "压力测量", "Pressure"},
     {"3", "温度测量", "Temp"},
     {"4", "设置", "Settings"},
-    {"5", "标定", "Calib"},
+    {"5", "校准", "Calibration"},
     {"6", "键盘测试", "Keyboard"},
 };
 
@@ -37,10 +37,13 @@ static void btn_event(lv_event_t *e)
 
     switch(index) {
         case 0:
-            ui_menu_navigate(UI_MENU_FUEL);
+            ui_menu_navigate(UI_MENU_FUEL);//烟气测量
             break;
         case 3:
-            ui_menu_navigate(UI_MENU_SETTING);
+            ui_menu_navigate(UI_MENU_SETTING);//设置
+            break;
+        case 4:
+            ui_menu_navigate(UI_MENU_CALIBRATION);//校准
             break;
         case 5:
             ui_input_show_mode("键盘测试", g_keyboard_test_value, UI_INPUT_MODE_FULL, keyboard_test_cb, NULL);

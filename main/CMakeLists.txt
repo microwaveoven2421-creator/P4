@@ -11,6 +11,7 @@ idf_component_register(
         "UI/screens/ui_setting.c"
         "UI/screens/ui_fuel.c"
         "UI/screens/ui_system_info.c"
+        "UI/screens/ui_calibration.c"
         "UI/comp/ui_input.c"
         "UI/comp/ui_date_picker.c"
 
