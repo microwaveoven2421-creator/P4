@@ -25,6 +25,7 @@ static lv_timer_t *clock_timer;
 static time_t base_epoch;
 static uint32_t base_tick_ms;
 static bool datetime_ready;
+static int brightness_value = 50;
 static void reset_confirm_cb(void *user_data);
 
 //================== 设置项定义 =====================
@@ -93,6 +94,8 @@ static void reset_confirm_cb(void *user_data)
 
     // 恢复默认值
     strcpy(setting_values[1], "50");
+    strcpy(setting_values[1], "50");
+    brightness_value = 50;
     strcpy(setting_values[2], "ON");
     strcpy(setting_values[3], "CN");
     //strcpy(setting_values[4], "ZH");
@@ -220,15 +223,14 @@ static void setting_event(lv_event_t *e)//设置项点击事件
             break;
         case SETTING_BRIGHTNESS://亮度设置，简单的增加10%，超过100%则回到10%
         {
-            static int val = 50;
-            val += 10;
-            if(val > 100) {
-                val = 10;
+            brightness_value += 10;
+            if(brightness_value > 100) {
+                brightness_value = 10;
             }
 
-            snprintf(setting_values[1], sizeof(setting_values[1]), "%d", val);
+            snprintf(setting_values[1], sizeof(setting_values[1]), "%d", brightness_value);
             lv_label_set_text(value_labels[1], setting_values[1]);
-            bsp_display_brightness_set(val);
+            bsp_display_brightness_set(brightness_value);
             break;
         }
         case SETTING_REGION://地区设置，直接输入文本，没做复杂的地区选择，所以不区分语言了
@@ -246,7 +248,7 @@ static void setting_event(lv_event_t *e)//设置项点击事件
             }
 
             update_language_value_text();
-            ui_menu_navigate(UI_MENU_SETTING);
+            ui_menu_refresh();
             break;
         }
         //都是开关，直接切换状态即可，这个顺序不要改，因为和setting_values的索引相关
@@ -329,7 +331,7 @@ lv_obj_t* ui_setting_create(void)
     update_language_value_text();
 
     ui_create_title(screen, ui_lang("设置", "Settings"));
-    ui_create_back_btn(screen, back_event);
+    ui_create_nav_bar(screen);
     list = ui_create_page_list(screen);
 
     for(int i = 0; i < 11; i++) {

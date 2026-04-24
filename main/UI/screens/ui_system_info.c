@@ -56,7 +56,7 @@ lv_obj_t* ui_system_info_create(void)
     ui_create_title(screen,
                     ui_lang("\xE8\xAE\xBE\xE5\xA4\x87\xE4\xBF\xA1\xE6\x81\xAF",
                             "Device Info"));
-    ui_create_back_btn(screen, back_event);
+    ui_create_nav_bar(screen);
     list = ui_create_page_list(screen);
 
     for(i = 0; i < DEVICE_INFO_COUNT; i++) {

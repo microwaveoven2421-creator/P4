@@ -19,7 +19,7 @@ lv_obj_t* ui_calibration_create(void)
     lv_obj_t *list;
 
     ui_create_title(screen, ui_lang("校准", "Calibration"));
-    ui_create_back_btn(screen, back_event);
+    ui_create_nav_bar(screen);
 
     list = ui_create_page_list(screen);
 

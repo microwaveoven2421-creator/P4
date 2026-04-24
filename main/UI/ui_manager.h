@@ -21,5 +21,7 @@ typedef enum {
 void ui_manager_init(void);
 void ui_menu_navigate(ui_menu_t menu);
 void ui_menu_back(void);
+void ui_menu_home(void);
+void ui_menu_refresh(void);
 
 #endif

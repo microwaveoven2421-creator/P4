@@ -163,7 +163,7 @@ lv_obj_t *ui_measurement_unit_create(void)
     ui_create_title(screen,
                     ui_lang("\xE6\xB5\x8B\xE9\x87\x8F\xE5\x8D\x95\xE4\xBD\x8D",
                             "Measurement Units"));
-    ui_create_back_btn(screen, back_event);
+    ui_create_nav_bar(screen);
     list = ui_create_page_list(screen);
 
     for(i = 0; i < UNIT_ITEM_COUNT; i++) {

@@ -32,7 +32,7 @@ lv_obj_t *ui_service_record_create(void)
     ui_create_title(screen,
                     ui_lang("\xE7\xBB\xB4\xE6\x8A\xA4\xE8\xAE\xB0\xE5\xBD\x95",
                             "Service Record"));
-    ui_create_back_btn(screen, back_event);
+    ui_create_nav_bar(screen);
     list = ui_create_page_list(screen);
 
     for(i = 0; i < (int)(sizeof(service_record_items) / sizeof(service_record_items[0])); i++) {

@@ -149,7 +149,7 @@ static void create_bottom_bar(lv_obj_t *parent)
 
     lv_obj_remove_style_all(bar);
     lv_obj_set_size(bar, lv_pct(100), 128);
-    lv_obj_align(bar, LV_ALIGN_BOTTOM_MID, 0, 0);
+    lv_obj_align(bar, LV_ALIGN_BOTTOM_MID, 0, -82);
     lv_obj_set_style_bg_color(bar, lv_color_hex(0xEAF0F6), 0);
     lv_obj_set_style_bg_opa(bar, LV_OPA_COVER, 0);
     lv_obj_set_style_border_width(bar, 1, 0);
@@ -177,7 +177,7 @@ static void create_page_card(lv_obj_t *parent, const pressure_page_t *page)
     lv_obj_t *box = lv_obj_create(card);
     lv_obj_t *hint = lv_label_create(box);
 
-    lv_obj_set_size(card, 420, 500);
+    lv_obj_set_size(card, 420, 430);
     lv_obj_set_style_radius(card, 28, 0);
     lv_obj_set_style_bg_color(card, lv_color_hex(0xFFFFFF), 0);
     lv_obj_set_style_bg_opa(card, LV_OPA_COVER, 0);
@@ -209,8 +209,8 @@ static void create_tileview(lv_obj_t *parent, lv_obj_t *indicator)
 {
     lv_obj_t *tileview = lv_tileview_create(parent);
 
-    lv_obj_set_size(tileview, 480, 540);
-    lv_obj_align(tileview, LV_ALIGN_TOP_MID, 0, 102);
+    lv_obj_set_size(tileview, 480, 470);
+    lv_obj_align(tileview, LV_ALIGN_TOP_MID, 0, 96);
     lv_obj_set_style_bg_opa(tileview, LV_OPA_TRANSP, 0);
     lv_obj_set_style_border_width(tileview, 0, 0);
     lv_obj_set_style_pad_all(tileview, 0, 0);
@@ -240,7 +240,7 @@ lv_obj_t *ui_pressure_create(void)
     g_state.running = false;
 
     create_title(screen, ui_lang(ZH_TITLE, "Pressure"));
-    ui_create_back_btn(screen, back_event);
+    ui_create_nav_bar(screen);
     indicator = create_indicator(screen);
     create_tileview(screen, indicator);
     create_bottom_bar(screen);

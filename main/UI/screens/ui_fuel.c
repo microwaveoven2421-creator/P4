@@ -53,7 +53,7 @@ lv_obj_t *ui_fuel_create(void)
     lv_obj_t *list;
 
     ui_create_title(screen, ui_lang(ZH_TITLE, "Fuel List"));
-    ui_create_back_btn(screen, back_event);
+    ui_create_nav_bar(screen);
     list = ui_create_page_list(screen);
 
     for(uint32_t i = 0; i < sizeof(fuel_list_items) / sizeof(fuel_list_items[0]); i++) {
