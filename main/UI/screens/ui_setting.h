@@ -13,7 +13,9 @@
 #define UI_SETTING_H
 
 #include "lvgl.h"
+#include <stdbool.h>
 
 lv_obj_t* ui_setting_create(void);
+bool ui_setting_gps_enabled(void);
 
 #endif

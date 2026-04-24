@@ -8,6 +8,7 @@
 
 void app_main(void)
 {
+    bsp_spiffs_mount();
     bsp_display_start();
 
     bsp_display_lock(portMAX_DELAY);

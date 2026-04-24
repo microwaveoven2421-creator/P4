@@ -14,9 +14,11 @@ static lv_obj_t *panel;
 static lv_obj_t *label;
 static lv_obj_t *cancel_label_obj;
 static lv_obj_t *ok_label_obj;
+static lv_obj_t *ok_btn_obj;
 
 static ui_confirm_cb_t confirm_cb;
 static void *confirm_user_data;
+static lv_obj_t *cancel_btn_obj;
 
 static bool popup_ready(void)
 {
@@ -89,6 +91,7 @@ void ui_confirm_init(lv_obj_t *parent)
 
     {
         lv_obj_t *btn_cancel = lv_button_create(panel);
+        cancel_btn_obj = btn_cancel;
         cancel_label_obj = lv_label_create(btn_cancel);
 
         lv_obj_set_size(btn_cancel, 120, 50);
@@ -102,6 +105,7 @@ void ui_confirm_init(lv_obj_t *parent)
 
     {
         lv_obj_t *btn_ok = lv_button_create(panel);
+        ok_btn_obj = btn_ok;
         ok_label_obj = lv_label_create(btn_ok);
 
         lv_obj_set_size(btn_ok, 120, 50);
@@ -125,7 +129,38 @@ void ui_confirm_show(const char *text, ui_confirm_cb_t ok_cb, void *user_data)
     }
 
     update_popup_language();
+    if(cancel_btn_obj && lv_obj_is_valid(cancel_btn_obj)) {
+        lv_obj_clear_flag(cancel_btn_obj, LV_OBJ_FLAG_HIDDEN);
+    }
+    if(ok_btn_obj && lv_obj_is_valid(ok_btn_obj)) {
+        lv_obj_align(ok_btn_obj, LV_ALIGN_BOTTOM_RIGHT, -20, -10);
+    }
     lv_label_set_text(label, text ? text : ui_lang(ZH_RESTORE_DEFAULT_CONFIRM, "Restore default settings?"));
+    confirm_cb = ok_cb;
+    confirm_user_data = user_data;
+
+    lv_obj_clear_flag(popup, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_move_foreground(popup);
+}
+
+void ui_confirm_show_ok(const char *text, ui_confirm_cb_t ok_cb, void *user_data)
+{
+    if(!popup_ready()) {
+        ui_confirm_init(lv_layer_top());
+    }
+
+    if(!popup_ready()) {
+        return;
+    }
+
+    update_popup_language();
+    if(cancel_btn_obj && lv_obj_is_valid(cancel_btn_obj)) {
+        lv_obj_add_flag(cancel_btn_obj, LV_OBJ_FLAG_HIDDEN);
+    }
+    if(ok_btn_obj && lv_obj_is_valid(ok_btn_obj)) {
+        lv_obj_align(ok_btn_obj, LV_ALIGN_BOTTOM_MID, 0, -10);
+    }
+    lv_label_set_text(label, text ? text : "");
     confirm_cb = ok_cb;
     confirm_user_data = user_data;
 

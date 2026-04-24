@@ -7,6 +7,9 @@
 static lv_obj_t *popup;
 static lv_obj_t *panel;
 static lv_obj_t *calendar;
+static lv_obj_t *title_label;
+static lv_obj_t *cancel_label;
+static lv_obj_t *ok_label;
 static lv_calendar_date_t selected_date;
 static ui_date_picker_cb_t confirm_cb;
 static void *confirm_user_data;
@@ -39,11 +42,17 @@ static void action_event_cb(lv_event_t *e)
     ui_date_picker_hide();
 }
 
+static void update_language_text(void)
+{
+    lv_label_set_text(title_label, ui_lang("选择日期", "Select Date"));
+    lv_label_set_text(cancel_label, ui_lang("取消", "Cancel"));
+    lv_label_set_text(ok_label, ui_lang("确定", "OK"));
+}
+
 void ui_date_picker_init(lv_obj_t *parent)
 {
     lv_obj_t *host = parent ? parent : lv_layer_top();
     lv_obj_t *btn;
-    lv_obj_t *label;
 
     if(popup) {
         return;
@@ -68,10 +77,10 @@ void ui_date_picker_init(lv_obj_t *parent)
     lv_obj_set_style_shadow_color(panel, lv_color_hex(0x94A3B8), 0);
     lv_obj_set_style_pad_all(panel, 16, 0);
 
-    label = lv_label_create(panel);
-    lv_label_set_text(label, ui_lang("选择日期", "Select Date"));
-    ui_apply_btn_text_style(label);
-    lv_obj_align(label, LV_ALIGN_TOP_MID, 0, 4);
+    title_label = lv_label_create(panel);
+    lv_label_set_text(title_label, ui_lang("选择日期", "Select Date"));
+    ui_apply_btn_text_style(title_label);
+    lv_obj_align(title_label, LV_ALIGN_TOP_MID, 0, 4);
 
     calendar = lv_calendar_create(panel);
 
@@ -109,11 +118,11 @@ void ui_date_picker_init(lv_obj_t *parent)
     lv_obj_set_style_border_width(btn, 1, 0);
     lv_obj_set_style_border_color(btn, lv_color_hex(0xD7E0EA), 0);
     lv_obj_add_event_cb(btn, action_event_cb, LV_EVENT_CLICKED, (void *)0);
-    label = lv_label_create(btn);
-    lv_label_set_text(label, "取消");
-    ui_apply_btn_text_style(label);
-    lv_obj_center(label);
-    lv_obj_set_style_text_font(label, ui_font_32(), 0);
+    cancel_label = lv_label_create(btn);
+    lv_label_set_text(cancel_label, ui_lang("取消", "Cancel"));
+    ui_apply_btn_text_style(cancel_label);
+    lv_obj_center(cancel_label);
+    lv_obj_set_style_text_font(cancel_label, ui_font_32(), 0);
 
     btn = lv_button_create(panel);
     lv_obj_set_size(btn, 160, 52);
@@ -123,11 +132,11 @@ void ui_date_picker_init(lv_obj_t *parent)
     lv_obj_set_style_border_width(btn, 1, 0);
     lv_obj_set_style_border_color(btn, lv_color_hex(0x93A9C2), 0);
     lv_obj_add_event_cb(btn, action_event_cb, LV_EVENT_CLICKED, (void *)1);
-    label = lv_label_create(btn);
-    lv_label_set_text(label, "确定");
-    ui_apply_btn_text_style(label);
-    lv_obj_center(label);
-    lv_obj_set_style_text_font(label, ui_font_32(), 0);
+    ok_label = lv_label_create(btn);
+    lv_label_set_text(ok_label, ui_lang("确定", "OK"));
+    ui_apply_btn_text_style(ok_label);
+    lv_obj_center(ok_label);
+    lv_obj_set_style_text_font(ok_label, ui_font_32(), 0);
 }
 
 void ui_date_picker_show(int year, int month, int day, ui_date_picker_cb_t cb, void *user_data)
@@ -136,11 +145,7 @@ void ui_date_picker_show(int year, int month, int day, ui_date_picker_cb_t cb, v
         ui_date_picker_init(lv_layer_top());
     }
 
-    // 刷新语言
-    lv_obj_t *title = lv_obj_get_child(panel, 0);
-    if(title) {
-        lv_label_set_text(title, ui_lang("选择日期", "Select Date"));
-    }
+    update_language_text();
 
     selected_date.year = year;
     selected_date.month = month;

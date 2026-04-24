@@ -16,11 +16,9 @@
 
 //================== 字符串定义 =====================
 #define ZH_RESTORE_DEFAULT_CONFIRM "\xE7\xA1\xAE\xE5\xAE\x9A\xE8\xA6\x81\xE6\x81\xA2\xE5\xA4\x8D\xE9\xBB\x98\xE8\xAE\xA4\xE8\xAE\xBE\xE7\xBD\xAE\xE5\x90\x97?"
-#define ZH_RESTORE_DEFAULT_DONE "\xE5\xB7\xB2\xE6\x81\xA2\xE5\xA4\x8D\xE9\xBB\x98\xE8\xAE\xA4\xE8\xAE\xBE\xE7\xBD\xAE"
-#define ZH_CANCEL "\xE5\x8F\x96\xE6\xB6\x88"
-#define ZH_OK "\xE7\xA1\xAE\xE5\xAE\x9A"
 //================== 变量定义 =====================
 static lv_obj_t *value_labels[16];
+static lv_obj_t *setting_screen;
 static lv_timer_t *clock_timer;
 static time_t base_epoch;
 static uint32_t base_tick_ms;
@@ -77,23 +75,20 @@ static void update_language_value_text(void)
     }
 }
 
+bool ui_setting_gps_enabled(void)
+{
+    return strcmp(setting_values[SETTING_GPS], "ON") == 0;
+}
+
 //====================================================
 //================== 事件callback函数 =====================
 //====================================================
-
-static void restore_default_confirm_cb(void *user_data)
-{
-    (void)user_data;
-
-    reset_confirm_cb(NULL);
-}
 
 static void reset_confirm_cb(void *user_data)
 {
     (void)user_data;
 
     // 恢复默认值
-    strcpy(setting_values[1], "50");
     strcpy(setting_values[1], "50");
     brightness_value = 50;
     strcpy(setting_values[2], "ON");
@@ -288,26 +283,11 @@ static void setting_event(lv_event_t *e)//设置项点击事件
     }
 }
 
-static void restore_default_event(lv_event_t *e)//恢复默认
-{
-    (void)e;
-
-    ui_confirm_show(
-        ui_lang(ZH_RESTORE_DEFAULT_CONFIRM, "Restore default settings?"),
-        restore_default_confirm_cb,
-        NULL
-    );
-}
-
-static void back_event(lv_event_t *e)//返回
-{
-    (void)e;
-    ui_menu_back();
-}
-
 static void screen_delete_event(lv_event_t *e)//界面被删除时的事件
 {
-    (void)e;
+    if(lv_event_get_target(e) != setting_screen) {
+        return;
+    }
 
     if(clock_timer) {
         lv_timer_delete(clock_timer);
@@ -317,6 +297,8 @@ static void screen_delete_event(lv_event_t *e)//界面被删除时的事件
     for(int i = 0; i < 16; i++) {
         value_labels[i] = NULL;
     }
+
+    setting_screen = NULL;
 }
 
 //====================================================
@@ -326,6 +308,13 @@ lv_obj_t* ui_setting_create(void)
 {
     lv_obj_t *screen = ui_create_screen();
     lv_obj_t *list;
+
+    if(clock_timer) {
+        lv_timer_delete(clock_timer);
+        clock_timer = NULL;
+    }
+
+    setting_screen = screen;
 
     init_datetime_if_needed();
     update_language_value_text();

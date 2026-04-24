@@ -1,20 +1,17 @@
 #include "screens/ui_home.h"
 #include "UI/ui.h"
 #include "UI/ui_manager.h"
-#include "comp/ui_input.h"
 #include "ui_common.h"
 
 #include <stdint.h>
-#include <stdio.h>
 
 #define ZH_HOME "\xE4\xB8\xBB\xE9\xA1\xB5"
 #define ZH_GAS "\xE7\x83\x9F\xE6\xB0\x94\xE6\xB5\x8B\xE9\x87\x8F"
-#define ZH_PRESSURE "\xE5\x8E\x8B\xE5\x8A\x9B\xE6\xB5\x8B\xE9\x87\x8F"
-#define ZH_TEMPERATURE "\xE6\xB8\xA9\xE5\xBA\xA6\xE6\xB5\x8B\xE9\x87\x8F"
+#define ZH_PRESSURE "\xE5\x8E\x8B\xE5\xB7\xAE\xE6\xB5\x8B\xE9\x87\x8F"
+#define ZH_TEMPERATURE "\xE6\xB8\xA9\xE5\xB7\xAE\xE6\xB5\x8B\xE9\x87\x8F"
 #define ZH_SETTING "\xE8\xAE\xBE\xE7\xBD\xAE"
 #define ZH_CALIBRATION "\xE6\xA0\xA1\xE5\x87\x86"
-#define ZH_KEYBOARD "\xE9\x94\xAE\xE7\x9B\x98\xE6\xB5\x8B\xE8\xAF\x95"
-#define ZH_KEYBOARD_TEST "\xE9\x94\xAE\xE7\x9B\x98\xE6\xB5\x8B\xE8\xAF\x95"
+#define ZH_SAVED_FILES "\xE5\xB7\xB2\xE4\xBF\x9D\xE5\xAD\x98\xE6\x96\x87\xE4\xBB\xB6"
 
 typedef struct {
     const char *btn;
@@ -22,23 +19,14 @@ typedef struct {
     const char *en;
 } home_item_t;
 
-static char g_keyboard_test_value[64] = "";
-
 static const home_item_t home_items[] = {
     {"1", ZH_GAS, "Gas"},
-    {"2", ZH_PRESSURE, "Pressure"},
-    {"3", ZH_TEMPERATURE, "Temperature"},
+    {"2", ZH_PRESSURE, "Differential Pressure"},
+    {"3", ZH_TEMPERATURE, "Temperature Difference"},
     {"4", ZH_SETTING, "Settings"},
     {"5", ZH_CALIBRATION, "Calibration"},
-    {"6", ZH_KEYBOARD, "Keyboard"},
+    {"6", ZH_SAVED_FILES, "Saved Files"},
 };
-
-static void keyboard_test_cb(const char *text, void *user_data)
-{
-    (void)user_data;
-    snprintf(g_keyboard_test_value, sizeof(g_keyboard_test_value), "%s", text ? text : "");
-    printf("keyboard test: %s\n", g_keyboard_test_value);
-}
 
 static void btn_event(lv_event_t *e)
 {
@@ -61,11 +49,7 @@ static void btn_event(lv_event_t *e)
             ui_menu_navigate(UI_MENU_CALIBRATION);
             break;
         case 5:
-            ui_input_show_mode(ui_lang(ZH_KEYBOARD_TEST, "Keyboard Test"),
-                               g_keyboard_test_value,
-                               UI_INPUT_MODE_FULL,
-                               keyboard_test_cb,
-                               NULL);
+            ui_menu_navigate(UI_MENU_SAVED_FILES);
             break;
         default:
             break;

@@ -11,6 +11,8 @@ static lv_obj_t *ta;
 static lv_obj_t *kb;
 static lv_obj_t *btn_number;
 static lv_obj_t *btn_full;
+static lv_obj_t *btn_number_label;
+static lv_obj_t *btn_full_label;
 
 static ui_input_cb_t input_cb;
 static void *input_user_data;
@@ -32,6 +34,13 @@ static void set_keyboard_mode(ui_input_mode_t mode)
 
     apply_mode_btn_style(btn_number, mode == UI_INPUT_MODE_NUMBER);
     apply_mode_btn_style(btn_full, mode == UI_INPUT_MODE_FULL);
+}
+
+static void update_language_text(const char *title)
+{
+    lv_label_set_text(title_label, title ? title : ui_lang("输入", "Input"));
+    lv_label_set_text(btn_number_label, ui_lang("数字", "Number"));
+    lv_label_set_text(btn_full_label, ui_lang("全键盘", "Keyboard"));
 }
 
 static void mode_btn_event_cb(lv_event_t *e)
@@ -61,7 +70,6 @@ static void kb_event_cb(lv_event_t *e)
 void ui_input_init(lv_obj_t *parent)
 {
     lv_obj_t *host = parent ? parent : lv_layer_top();
-    lv_obj_t *label;
 
     if(popup) {
         return;
@@ -87,7 +95,7 @@ void ui_input_init(lv_obj_t *parent)
     lv_obj_set_style_pad_all(panel, 16, 0);
 
     title_label = lv_label_create(panel);
-    lv_label_set_text(title_label, "输入");
+    lv_label_set_text(title_label, ui_lang("输入", "Input"));
     ui_apply_btn_text_style(title_label);
     lv_obj_align(title_label, LV_ALIGN_TOP_MID, 0, 4);
 
@@ -98,10 +106,10 @@ void ui_input_init(lv_obj_t *parent)
     lv_obj_set_style_border_width(btn_number, 1, 0);
     lv_obj_set_style_shadow_width(btn_number, 0, 0);
     lv_obj_add_event_cb(btn_number, mode_btn_event_cb, LV_EVENT_CLICKED, (void *)UI_INPUT_MODE_NUMBER);
-    label = lv_label_create(btn_number);
-    lv_label_set_text(label, "数字");
-    ui_apply_btn_text_style(label);
-    lv_obj_center(label);
+    btn_number_label = lv_label_create(btn_number);
+    lv_label_set_text(btn_number_label, ui_lang("数字", "Number"));
+    ui_apply_btn_text_style(btn_number_label);
+    lv_obj_center(btn_number_label);
 
     btn_full = lv_button_create(panel);
     lv_obj_set_size(btn_full, 120, 44);
@@ -110,10 +118,10 @@ void ui_input_init(lv_obj_t *parent)
     lv_obj_set_style_border_width(btn_full, 1, 0);
     lv_obj_set_style_shadow_width(btn_full, 0, 0);
     lv_obj_add_event_cb(btn_full, mode_btn_event_cb, LV_EVENT_CLICKED, (void *)UI_INPUT_MODE_FULL);
-    label = lv_label_create(btn_full);
-    lv_label_set_text(label, "全键盘");
-    ui_apply_btn_text_style(label);
-    lv_obj_center(label);
+    btn_full_label = lv_label_create(btn_full);
+    lv_label_set_text(btn_full_label, ui_lang("全键盘", "Keyboard"));
+    ui_apply_btn_text_style(btn_full_label);
+    lv_obj_center(btn_full_label);
 
     ta = lv_textarea_create(panel);
     lv_obj_set_size(ta, 428, 72);
@@ -156,7 +164,7 @@ void ui_input_show_mode(const char *title,
     input_cb = cb;
     input_user_data = user_data;
 
-    lv_label_set_text(title_label, title ? title : "输入");
+    update_language_text(title);
     lv_textarea_set_text(ta, init_text ? init_text : "");
     set_keyboard_mode(mode);
     lv_obj_clear_flag(popup, LV_OBJ_FLAG_HIDDEN);

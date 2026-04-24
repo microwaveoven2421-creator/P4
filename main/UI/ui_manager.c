@@ -8,6 +8,7 @@
 #include "screens/ui_pressure.h"
 #include "screens/ui_service_record.h"
 #include "screens/ui_setting.h"
+#include "screens/ui_saved_files.h"
 #include "screens/ui_system_info.h"
 #include "screens/ui_temperature.h"
 
@@ -43,6 +44,10 @@ static lv_obj_t *create_menu(ui_menu_t menu)
             return ui_calibration_create();
         case UI_MENU_SYSTEM_INFO:
             return ui_system_info_create();
+        case UI_MENU_SAVED_FILES:
+            return ui_saved_files_create();
+        case UI_MENU_SAVED_FILE_DETAIL:
+            return ui_saved_file_detail_create();
         default:
             return NULL;
     }
@@ -50,15 +55,19 @@ static lv_obj_t *create_menu(ui_menu_t menu)
 
 static void load_menu(ui_menu_t menu)
 {
-    if(current_screen) {
-        lv_obj_del(current_screen);
+    lv_obj_t *old_screen = current_screen;
+    lv_obj_t *new_screen = create_menu(menu);
+
+    if(!new_screen) {
+        return;
     }
 
     current_menu = menu;
-    current_screen = create_menu(menu);
+    current_screen = new_screen;
+    lv_screen_load(new_screen);
 
-    if(current_screen) {
-        lv_screen_load(current_screen);
+    if(old_screen) {
+        lv_obj_del(old_screen);
     }
 }
 
