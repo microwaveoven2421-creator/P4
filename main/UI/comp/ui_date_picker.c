@@ -113,6 +113,7 @@ void ui_date_picker_init(lv_obj_t *parent)
     lv_label_set_text(label, "取消");
     ui_apply_btn_text_style(label);
     lv_obj_center(label);
+    lv_obj_set_style_text_font(label, ui_font_32(), 0);
 
     btn = lv_button_create(panel);
     lv_obj_set_size(btn, 160, 52);
@@ -126,6 +127,7 @@ void ui_date_picker_init(lv_obj_t *parent)
     lv_label_set_text(label, "确定");
     ui_apply_btn_text_style(label);
     lv_obj_center(label);
+    lv_obj_set_style_text_font(label, ui_font_32(), 0);
 }
 
 void ui_date_picker_show(int year, int month, int day, ui_date_picker_cb_t cb, void *user_data)

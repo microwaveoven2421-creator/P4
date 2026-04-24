@@ -10,10 +10,14 @@ idf_component_register(
         "UI/screens/ui_home.c"
         "UI/screens/ui_setting.c"
         "UI/screens/ui_fuel.c"
+        "UI/screens/ui_fuel_measurement.c"
+        "UI/screens/ui_pressure.c"
+        "UI/screens/ui_temperature.c"
         "UI/screens/ui_system_info.c"
         "UI/screens/ui_calibration.c"
         "UI/comp/ui_input.c"
         "UI/comp/ui_date_picker.c"
+        "UI/comp/ui_confirm.c"
 
     INCLUDE_DIRS
         "."
@@ -24,7 +28,7 @@ idf_component_register(
 
 idf_component_get_property(LVGL_LIB lvgl__lvgl COMPONENT_LIB)
 target_compile_options(
-    ${LVGL_LIB} 
+    ${LVGL_LIB}
     PRIVATE
         -DLV_LVGL_H_INCLUDE_SIMPLE
 )

@@ -1,9 +1,12 @@
 #include "ui_manager.h"
-#include "screens/ui_home.h"
-#include "screens/ui_setting.h"
-#include "screens/ui_fuel.h"
-#include "screens/ui_system_info.h"
 #include "screens/ui_calibration.h"
+#include "screens/ui_fuel.h"
+#include "screens/ui_fuel_measurement.h"
+#include "screens/ui_home.h"
+#include "screens/ui_pressure.h"
+#include "screens/ui_setting.h"
+#include "screens/ui_system_info.h"
+#include "screens/ui_temperature.h"
 
 #include <stdint.h>
 
@@ -12,18 +15,24 @@ static uint8_t history_top = 0;
 
 static lv_obj_t *current_screen = NULL;
 
-static lv_obj_t* create_menu(ui_menu_t menu)
+static lv_obj_t *create_menu(ui_menu_t menu)
 {
     switch(menu) {
-        case UI_MENU_HOME:// 首页
+        case UI_MENU_HOME:
             return ui_home_create();
-        case UI_MENU_SETTING:// 设置
+        case UI_MENU_SETTING:
             return ui_setting_create();
-        case UI_MENU_FUEL:// 燃油
+        case UI_MENU_FUEL:
             return ui_fuel_create();
-        case UI_MENU_CALIBRATION:// 校准
+        case UI_MENU_FUEL_MEASUREMENT:
+            return ui_fuel_measurement_create();
+        case UI_MENU_PRESSURE:
+            return ui_pressure_create();
+        case UI_MENU_TEMPERATURE:
+            return ui_temperature_create();
+        case UI_MENU_CALIBRATION:
             return ui_calibration_create();
-        case UI_MENU_SYSTEM_INFO:// 系统信息
+        case UI_MENU_SYSTEM_INFO:
             return ui_system_info_create();
         default:
             return NULL;

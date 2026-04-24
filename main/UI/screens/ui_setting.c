@@ -5,6 +5,7 @@
 #include "bsp/display.h"
 #include "comp/ui_input.h"
 #include "comp/ui_date_picker.h"
+#include "comp/ui_confirm.h"
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -12,6 +13,21 @@
 #include <string.h>
 #include <time.h>
 
+
+//================== 字符串定义 =====================
+#define ZH_RESTORE_DEFAULT_CONFIRM "\xE7\xA1\xAE\xE5\xAE\x9A\xE8\xA6\x81\xE6\x81\xA2\xE5\xA4\x8D\xE9\xBB\x98\xE8\xAE\xA4\xE8\xAE\xBE\xE7\xBD\xAE\xE5\x90\x97?"
+#define ZH_RESTORE_DEFAULT_DONE "\xE5\xB7\xB2\xE6\x81\xA2\xE5\xA4\x8D\xE9\xBB\x98\xE8\xAE\xA4\xE8\xAE\xBE\xE7\xBD\xAE"
+#define ZH_CANCEL "\xE5\x8F\x96\xE6\xB6\x88"
+#define ZH_OK "\xE7\xA1\xAE\xE5\xAE\x9A"
+//================== 变量定义 =====================
+static lv_obj_t *value_labels[16];
+static lv_timer_t *clock_timer;
+static time_t base_epoch;
+static uint32_t base_tick_ms;
+static bool datetime_ready;
+static void reset_confirm_cb(void *user_data);
+
+//================== 设置项定义 =====================
 static const char *setting_items[][2] = {
     {"日期/时间", "Date & Time"},
     {"LCD亮度", "LCD Brightness"},
@@ -26,18 +42,76 @@ static const char *setting_items[][2] = {
     {"系统信息", "Info"},
 };
 
+
 static char setting_values[16][32] = {
     "", "50", "ON", "CN", "ZH",
     "OFF", "OFF", "ON", "Metric", "", ""
 };
 
-static lv_obj_t *value_labels[16];
-static lv_timer_t *clock_timer;
-static time_t base_epoch;
-static uint32_t base_tick_ms;
-static bool datetime_ready;
+typedef enum {
+    SETTING_DATETIME = 0,
+    SETTING_BRIGHTNESS,
+    SETTING_BLUETOOTH,
+    SETTING_REGION,
+    SETTING_LANGUAGE,
+    SETTING_GPS,
+    SETTING_WIFI,
+    SETTING_KEY_SOUND,
+    SETTING_UNIT,
+    SETTING_RESET,
+    SETTING_INFO
+} setting_id_t;
 
-static time_t current_epoch(void)
+static void update_language_value_text(void)
+{
+    if(ui_get_language() == LANG_ZH) {
+        snprintf(setting_values[SETTING_LANGUAGE], sizeof(setting_values[SETTING_LANGUAGE]), "%s", "\xE4\xB8\xAD\xE6\x96\x87");
+    }
+    else {
+        snprintf(setting_values[SETTING_LANGUAGE], sizeof(setting_values[SETTING_LANGUAGE]), "%s", "English");
+    }
+
+    if(value_labels[SETTING_LANGUAGE]) {
+        lv_label_set_text(value_labels[SETTING_LANGUAGE], setting_values[SETTING_LANGUAGE]);
+    }
+}
+
+//====================================================
+//================== 事件callback函数 =====================
+//====================================================
+
+static void restore_default_confirm_cb(void *user_data)
+{
+    (void)user_data;
+
+    reset_confirm_cb(NULL);
+}
+
+static void reset_confirm_cb(void *user_data)
+{
+    (void)user_data;
+
+    // 恢复默认值
+    strcpy(setting_values[1], "50");
+    strcpy(setting_values[2], "ON");
+    strcpy(setting_values[3], "CN");
+    //strcpy(setting_values[4], "ZH");
+    strcpy(setting_values[5], "OFF");
+    strcpy(setting_values[6], "OFF");
+    strcpy(setting_values[7], "ON");
+    strcpy(setting_values[8], "Metric");
+    update_language_value_text();
+
+    // 刷新UI
+    for(int i = 0; i < 9; i++) {
+        lv_label_set_text(value_labels[i], setting_values[i]);
+    }
+
+    // 亮度同步
+    bsp_display_brightness_set(50);
+}
+
+static time_t current_epoch(void)//获取当前时间的epoch，单位是秒
 {
     return base_epoch + (time_t)(lv_tick_elaps(base_tick_ms) / 1000U);
 }
@@ -83,6 +157,7 @@ static void clock_timer_cb(lv_timer_t *timer)
     update_datetime_text();
 }
 
+//日期选择完成回调，year、month、day是选择的年月日，user_data是之前传入的用户数据，这里不需要用到
 static void date_selected_cb(int year, int month, int day, void *user_data)
 {
     struct tm *now_tm;
@@ -106,6 +181,7 @@ static void date_selected_cb(int year, int month, int day, void *user_data)
     update_datetime_text();
 }
 
+//输入完成回调，text是输入的文本，user_data是之前传入的用户数据，这里用来区分是哪个设置项
 static void input_cb(const char *text, void *user_data)
 {
     int i = (int)(uintptr_t)user_data;
@@ -114,7 +190,7 @@ static void input_cb(const char *text, void *user_data)
     lv_label_set_text(value_labels[i], setting_values[i]);
 }
 
-static void open_date_picker(void)
+static void open_date_picker(void)//打开日期选择器，初始值为当前时间
 {
     struct tm *now_tm;
     time_t now = current_epoch();
@@ -131,15 +207,18 @@ static void open_date_picker(void)
                         NULL);
 }
 
-static void setting_event(lv_event_t *e)
+//====================================================
+//================== 事件函数 =====================
+//====================================================
+static void setting_event(lv_event_t *e)//设置项点击事件
 {
-    uint32_t i = (uint32_t)(uintptr_t)lv_event_get_user_data(e);
+    setting_id_t i = (setting_id_t)(uintptr_t)lv_event_get_user_data(e);
 
     switch(i) {
-        case 0:
+        case SETTING_DATETIME:
             open_date_picker();
             break;
-        case 1:
+        case SETTING_BRIGHTNESS://亮度设置，简单的增加10%，超过100%则回到10%
         {
             static int val = 50;
             val += 10;
@@ -152,28 +231,30 @@ static void setting_event(lv_event_t *e)
             bsp_display_brightness_set(val);
             break;
         }
-        case 3:
-            ui_input_show_mode("输入地区", setting_values[3], UI_INPUT_MODE_FULL, input_cb, (void *)(uintptr_t)3);
+        case SETTING_REGION://地区设置，直接输入文本，没做复杂的地区选择，所以不区分语言了
+        {
+            ui_input_show_mode("输入地区", setting_values[i], UI_INPUT_MODE_FULL, input_cb, (void *)(uintptr_t)i);
             break;
-        case 4:
+        }
+        case SETTING_LANGUAGE://语言切换
+        {
             if(ui_get_language() == LANG_ZH) {
                 ui_set_language(LANG_EN);
-                snprintf(setting_values[4], sizeof(setting_values[4]), "EN");
             }
             else {
                 ui_set_language(LANG_ZH);
-                snprintf(setting_values[4], sizeof(setting_values[4]), "ZH");
             }
 
+            update_language_value_text();
             ui_menu_navigate(UI_MENU_SETTING);
             break;
-        case 10:
-            ui_menu_navigate(UI_MENU_SYSTEM_INFO);
-            break;
-        case 2:
-        case 5:
-        case 6:
-        case 7:
+        }
+        //都是开关，直接切换状态即可，这个顺序不要改，因为和setting_values的索引相关
+        case SETTING_BLUETOOTH://蓝牙
+        case SETTING_GPS://GPS
+        case SETTING_WIFI://Wi-Fi
+        case SETTING_KEY_SOUND://按键音
+        {
             if(strcmp(setting_values[i], "ON") == 0) {
                 snprintf(setting_values[i], sizeof(setting_values[i]), "OFF");
             }
@@ -183,18 +264,53 @@ static void setting_event(lv_event_t *e)
 
             lv_label_set_text(value_labels[i], setting_values[i]);
             break;
+        }
+        case SETTING_UNIT://单位
+        {
+            if(strcmp(setting_values[i], "Metric") == 0) {
+                snprintf(setting_values[i], sizeof(setting_values[i]), "Imperial");
+            }
+            else {
+                snprintf(setting_values[i], sizeof(setting_values[i]), "Metric");
+            }
+
+            lv_label_set_text(value_labels[i], setting_values[i]);
+            break;
+        }
+        case SETTING_RESET://恢复默认
+            {
+                ui_confirm_show(ui_lang(ZH_RESTORE_DEFAULT_CONFIRM, "Restore default settings?"), reset_confirm_cb, NULL);
+                break;
+            }
+        case SETTING_INFO://系统信息
+        {
+            ui_menu_navigate(UI_MENU_SYSTEM_INFO);
+            break;
+        }
+
         default:
             break;
     }
 }
 
-static void back_event(lv_event_t *e)
+static void restore_default_event(lv_event_t *e)//恢复默认
+{
+    (void)e;
+
+    ui_confirm_show(
+        ui_lang(ZH_RESTORE_DEFAULT_CONFIRM, "Restore default settings?"),
+        restore_default_confirm_cb,
+        NULL
+    );
+}
+
+static void back_event(lv_event_t *e)//返回
 {
     (void)e;
     ui_menu_back();
 }
 
-static void screen_delete_event(lv_event_t *e)
+static void screen_delete_event(lv_event_t *e)//界面被删除时的事件
 {
     (void)e;
 
@@ -204,12 +320,16 @@ static void screen_delete_event(lv_event_t *e)
     }
 }
 
+//====================================================
+//================== 主要界面创建函数 ===================
+//====================================================
 lv_obj_t* ui_setting_create(void)
 {
     lv_obj_t *screen = ui_create_screen();
     lv_obj_t *list;
 
     init_datetime_if_needed();
+    update_language_value_text();
 
     ui_create_title(screen, ui_lang("设置", "Settings"));
     ui_create_back_btn(screen, back_event);
@@ -231,12 +351,14 @@ lv_obj_t* ui_setting_create(void)
 
         lv_label_set_text(value_labels[i], setting_values[i]);
         ui_apply_btn_text_style(value_labels[i]);
-        lv_obj_align(value_labels[i], LV_ALIGN_RIGHT_MID, 0, 0);// -10,0 是为了防止过长的值遮挡箭头
+        lv_obj_align(value_labels[i], LV_ALIGN_RIGHT_MID, 0, 0);//对齐到右侧中间
     }
 
     update_datetime_text();
     clock_timer = lv_timer_create(clock_timer_cb, 1000, NULL);
     lv_obj_add_event_cb(screen, screen_delete_event, LV_EVENT_DELETE, NULL);
+
+    ui_confirm_init(screen);
 
     return screen;
 }
