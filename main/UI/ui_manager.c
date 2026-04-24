@@ -3,7 +3,10 @@
 #include "screens/ui_fuel.h"
 #include "screens/ui_fuel_measurement.h"
 #include "screens/ui_home.h"
+#include "screens/ui_manufacturer_info.h"
+#include "screens/ui_measurement_unit.h"
 #include "screens/ui_pressure.h"
+#include "screens/ui_service_record.h"
 #include "screens/ui_setting.h"
 #include "screens/ui_system_info.h"
 #include "screens/ui_temperature.h"
@@ -30,6 +33,12 @@ static lv_obj_t *create_menu(ui_menu_t menu)
             return ui_pressure_create();
         case UI_MENU_TEMPERATURE:
             return ui_temperature_create();
+        case UI_MENU_MEASUREMENT_UNIT:
+            return ui_measurement_unit_create();
+        case UI_MENU_SERVICE_RECORD:
+            return ui_service_record_create();
+        case UI_MENU_MANUFACTURER_INFO:
+            return ui_manufacturer_info_create();
         case UI_MENU_CALIBRATION:
             return ui_calibration_create();
         case UI_MENU_SYSTEM_INFO:

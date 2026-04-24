@@ -39,7 +39,7 @@ static const char *setting_items[][2] = {
     {"按键音", "Key Sound"},
     {"单位", "Unit"},
     {"恢复默认", "Reset"},
-    {"系统信息", "Info"},
+    {"\xE8\xAE\xBE\xE5\xA4\x87\xE4\xBF\xA1\xE6\x81\xAF", "Device Info"},
 };
 
 
@@ -71,7 +71,7 @@ static void update_language_value_text(void)
         snprintf(setting_values[SETTING_LANGUAGE], sizeof(setting_values[SETTING_LANGUAGE]), "%s", "English");
     }
 
-    if(value_labels[SETTING_LANGUAGE]) {
+    if(value_labels[SETTING_LANGUAGE] && lv_obj_is_valid(value_labels[SETTING_LANGUAGE])) {
         lv_label_set_text(value_labels[SETTING_LANGUAGE], setting_values[SETTING_LANGUAGE]);
     }
 }
@@ -126,8 +126,8 @@ static void update_datetime_text(void)
         return;
     }
 
-    strftime(setting_values[0], sizeof(setting_values[0]), "%Y-%m-%d %H:%M", now_tm);
-    if(value_labels[0]) {
+    strftime(setting_values[0], sizeof(setting_values[0]), "%Y-%m-%d", now_tm);
+    if(value_labels[0] && lv_obj_is_valid(value_labels[0])) {
         lv_label_set_text(value_labels[0], setting_values[0]);
     }
 }
@@ -267,14 +267,7 @@ static void setting_event(lv_event_t *e)//设置项点击事件
         }
         case SETTING_UNIT://单位
         {
-            if(strcmp(setting_values[i], "Metric") == 0) {
-                snprintf(setting_values[i], sizeof(setting_values[i]), "Imperial");
-            }
-            else {
-                snprintf(setting_values[i], sizeof(setting_values[i]), "Metric");
-            }
-
-            lv_label_set_text(value_labels[i], setting_values[i]);
+            ui_menu_navigate(UI_MENU_MEASUREMENT_UNIT);
             break;
         }
         case SETTING_RESET://恢复默认
@@ -318,6 +311,10 @@ static void screen_delete_event(lv_event_t *e)//界面被删除时的事件
         lv_timer_delete(clock_timer);
         clock_timer = NULL;
     }
+
+    for(int i = 0; i < 16; i++) {
+        value_labels[i] = NULL;
+    }
 }
 
 //====================================================
@@ -347,7 +344,7 @@ lv_obj_t* ui_setting_create(void)
         value_labels[i] = lv_label_create(btn);
         // ===== 防止时间过长遮挡 =====
         lv_obj_set_width(value_labels[i], 140);
-        lv_label_set_long_mode(value_labels[i], LV_LABEL_LONG_SCROLL_CIRCULAR);
+        lv_label_set_long_mode(value_labels[i], LV_LABEL_LONG_DOT);
 
         lv_label_set_text(value_labels[i], setting_values[i]);
         ui_apply_btn_text_style(value_labels[i]);
